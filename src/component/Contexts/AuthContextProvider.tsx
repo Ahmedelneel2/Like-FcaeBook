@@ -1,35 +1,47 @@
-import React,{ createContext, useEffect, useState }  from 'react'
-  export const authContext = createContext()
+import React, { createContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
+interface AuthContextType {
+  token: string | null;
+  setUserToken: (userToken: string | null) => void;
+  logOut: () => void;
+}
 
-const AuthContextProvider = ({children}) => {
-    const [token , setToken ]= useState(null)
+export const authContext = createContext<AuthContextType | null>(null);
 
- useEffect( function(){
-  if(localStorage.getItem("token")){
-    setToken (localStorage.getItem("token"))
+interface Props {
+  children: ReactNode;
+}
+
+const AuthContextProvider = ({ children }: Props) => {
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
+
+  function setUserToken(userToken: string | null) {
+    setToken(userToken);
   }
- } ,[])
-function setUserToken (userToken){
-  setToken (userToken)
-}
-function logOut(){
-  setToken (null)
-  localStorage.removeItem("token")
-}
+
+  function logOut() {
+    setToken(null);
+    localStorage.removeItem("token");
+  }
 
   return (
-    <authContext.Provider value={
-      {
+    <authContext.Provider
+      value={{
         token,
         setUserToken,
-        logOut
-      }
-    }>
+        logOut,
+      }}
+    >
       {children}
     </authContext.Provider>
-      
-    
-  )
-}
+  );
+};
 
-export default AuthContextProvider
+export default AuthContextProvider;

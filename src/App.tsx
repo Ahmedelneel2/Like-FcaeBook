@@ -6,11 +6,11 @@ import Regestier from './component/Regestier/Regestier'
 import Login from './component/Login/Login'
 import NotFound from './component/NotFound/NotFound'
 import { Toaster } from 'react-hot-toast'
-import AuthContextProvider from './component/Contexts/authContextProvider'
-import ProtectedRoute from './component/ProtectedRoute/ProtectedRoute'
-import Profile from './component/Profile/Profile' 
-import PostDetails from './component/PostDetails/PostDetails'
+import AuthContextProvider from './component/Contexts/AuthContextProvider'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+import ProtectedRoute from './component/ProtectedRoute/ProtectedRoute'
+import Profile from './component/Profile/Profile'
+import PostDetails from './component/PostDetails/PostDetails'
 const App = () => {
   const client = new QueryClient()
   const router = createBrowserRouter([{path:'/' , element:<LayOut/> , children:[

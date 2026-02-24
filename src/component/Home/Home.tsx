@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styles from './Home.module.css'
-import Post from '../../component/Post/Post'
+import Post from '../Post/Post'
 import axios from 'axios'
 import Loading from '../Loading/Loading'
 import { useQuery } from '@tanstack/react-query'

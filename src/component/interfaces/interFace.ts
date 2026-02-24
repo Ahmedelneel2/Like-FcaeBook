@@ -4,6 +4,6 @@ export interface valuesInterface {
   email: string
   password: string
   rePassword: string
-  dateOfBirth: string
+  dateOfBirth: Date
   gender: string
 }

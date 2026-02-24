@@ -1,9 +1,16 @@
 import React, { useContext } from 'react'
 import styles from './Navbar.module.css'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { authContext } from '../Contexts/authContextProvider'
+import { authContext } from '../Contexts/AuthContextProvider'
+
 const Navbar = () => {
-  const { token , logOut } = useContext(authContext)
+ const context = useContext(authContext)
+
+if (!context) {
+  throw new Error("authContext must be used within AuthContextProvider")
+}
+
+const { token, logOut } = context
   const navigate = useNavigate();
   function handleLogout(){
     logOut()
@@ -15,7 +22,11 @@ const Navbar = () => {
       <div className="navbar  shadow-sm px-7 py-1 flex justify-between bg-blue-700 flex-col md:flex-row">
         {token ? <div className="flex-1">
           <NavLink to={"/"} className="btn btn-ghost text-xl">Linked Postes </NavLink>
-        </div> : <h1 className='text-center text-2xl'>Login First please </h1>}
+        </div> : <div className="flex-1">
+  <NavLink to="/" className="btn btn-ghost text-xl">
+    Linked Posts
+  </NavLink>
+</div>}
         <div className="flex gap-2 bg-blue-700">
           {token ?  <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
@@ -25,9 +36,7 @@ const Navbar = () => {
                   src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
               </div>
             </div>
-            <ul
-              tabIndex="-1"
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+            <ul className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                <li className='  text-black'><NavLink to="/profile">Profile</NavLink></li>
               <li>
                 <button className='text-black' onClick={handleLogout}> Logout</button>

@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import { jwt } from 'zod'
 import { jwtDecode } from 'jwt-decode'
 import Loading from '../Loading/Loading'
+import type { Comment, PostInterface } from '../interfaces/UserPostesInterface'
 
-const Post = ({ post, postDetails }) => {
+const Post = ({ post, postDetails }:{post:PostInterface , postDetails:any}) => {
   const [commentContent, setCommentContent] = useState("")
   const Comment = {
     content: commentContent,
@@ -22,7 +22,10 @@ const Post = ({ post, postDetails }) => {
       }
     })
   }
-  const [userId, setUserId] = useState(jwtDecode(localStorage.getItem("token")));   
+  const decoded = localStorage.getItem("token");
+const token = decoded ? jwtDecode(decoded) : null;
+console.log(decoded);
+  const [userId, setUserId] = useState(token);   
   const queryClient = useQueryClient();
   const { isPending, mutate } = useMutation({
     mutationFn: createComment,
@@ -30,7 +33,7 @@ const Post = ({ post, postDetails }) => {
       toast.success(data?.data?.message);
       setCommentContent("")
       queryClient.invalidateQueries({ queryKey: ["postDetails", post?.id] })
-      queryClient.invalidateQueries({ queryKey: ["userPostsAll", userId.user] })
+      queryClient.invalidateQueries({ queryKey: ["userPostsAll", userId?.user] })
 
     },
     onError: (error) => { toast.error(error.message) }
@@ -51,12 +54,12 @@ const Post = ({ post, postDetails }) => {
       <div className="bg-gray-100 rounded px-3 pb-2 mt-3 ">
         {postDetails ? "" : <Link to={`/postDetails/${post?.id}`} className="text-blue-500 text-3xl text-center ms-auto"> view all comments</Link>}
         {postDetails ? <div>
-          {post?.comments?.map(function (comment, index) {
-            return <>
+          {post?.comments?.map(function (comment:Comment, index: number) {
+            return <React.Fragment key={comment._id}>
               <Userinfo key={index} date={comment?.createdAt} name={comment?.commentCreator.name} pic={comment?.commentCreator.photo} />
               <p className='mx-3' > {comment?.content}</p>
 
-            </>
+            </React.Fragment>
           })}
           {/* to add new comment  */}
           <div className="join w-full mt-3">
@@ -74,7 +77,7 @@ const Post = ({ post, postDetails }) => {
 
               <input className='w-full h-9' type="text" placeholder="Add a comment..." value={commentContent} onChange={(e) => setCommentContent(e.target.value)} />
             </div>
-            <button onClick={mutate} className="btn  h-9 ms-2 bg-blue-700 join-item">{isPending ? <Loading /> : <i class="fa-solid fa-paper-plane"></i>}</button>
+            <button onClick={ () => {if (!commentContent.trim()) return mutate()}} className="btn  h-9 ms-2 bg-blue-700 join-item">{isPending ? <Loading /> : <i className="fa-solid fa-paper-plane"></i>}</button>
           </div>
         </div> : <div> {post?.comments ?
           <Userinfo date={post?.comments[0]?.createdAt} name={post?.comments[0]?.commentCreator.name} pic={post?.comments[0]?.commentCreator.photo} /> : ""}
